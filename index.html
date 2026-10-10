@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>advanced download button</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      padding: 1.5rem;
+      margin: 0;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(8px);
+      border-radius: 3.5rem;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 30px 40px -20px rgba(0, 0, 0, 0.8), 
+                  inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    /* advanced download button */
+    .download-btn {
+      --btn-bg: #0b0f17;
+      --btn-border: #2d3a52;
+      --btn-glow: #3b82f6;
+      --btn-accent: #60a5fa;
+      --btn-text: #e2e8f0;
+      --btn-progress: 0%;
+      
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.85rem;
+      padding: 1.25rem 2.5rem 1.25rem 2.8rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--btn-text);
+      background: var(--btn-bg);
+      border: 1.5px solid var(--btn-border);
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1);
+      box-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.8), 
+                  0 0 0 0px rgba(59, 130, 246, 0.3);
+      overflow: hidden;
+      z-index: 1;
+      isolation: isolate;
+      line-height: 1;
+      outline: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* glow border animation on hover */
+    .download-btn::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 100px;
+      padding: 2px;
+      background: linear-gradient(135deg, 
+        transparent 0%, 
+        transparent 30%,
+        var(--btn-glow) 50%,
+        transparent 70%,
+        transparent 100%);
+      background-size: 250% 100%;
+      background-position: 100% 0;
+      transition: background-position 0.6s ease, opacity 0.3s ease;
+      opacity: 0.8;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .download-btn:hover::before {
+      background-position: 0% 0;
+      opacity: 1;
+    }
+
+    /* inner glass overlay */
+    .download-btn::after {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 100px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* hover lift + glow */
+    .download-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--btn-accent);
+      box-shadow: 0 22px 35px -15px rgba(0, 0, 0, 0.9), 
+                  0 0 0 2px rgba(59, 130, 246, 0.25),
+                  0 0 20px -5px var(--btn-glow);
+    }
+
+    .download-btn:active {
+      transform: translateY(0px) scale(0.98);
+      transition-duration: 0.1s;
+      box-shadow: 0 8px 18px -10px black;
+    }
+
+    /* icon container */
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.8rem;
+      height: 1.8rem;
+      transition: transform 0.3s ease;
+    }
+
+    .download-btn:hover .btn-icon {
+      transform: translateY(-2px);
+    }
+
+    .download-btn svg {
+      width: 100%;
+      height: 100%;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.6));
+    }
+
+    /* text label */
+    .btn-label {
+      position: relative;
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+    }
+
+    /* progress ring background (subtle) */
+    .progress-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 100px;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    /* progress fill effect – reveals a soft radial light that follows progress */
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: var(--btn-progress, 0%);
+      background: radial-gradient(circle at 70% 50%, 
+        rgba(59, 130, 246, 0.35) 0%, 
+        rgba(59, 130, 246, 0.1) 60%,
+        transparent 100%);
+      transition: width 0.4s cubic-bezier(0.3, 0.9, 0.4, 1);
+      border-radius: 100px;
+      pointer-events: none;
+    }
+
+    /* shimmer line – advanced detail */
+    .shimmer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(105deg, 
+        transparent 30%, 
+        rgba(255, 255, 255, 0.15) 45%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0.15) 55%,
+        transparent 70%);
+      background-size: 250% 100%;
+      background-position: 130% 0;
+      border-radius: 100px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .download-btn:hover .shimmer {
+      opacity: 1;
+      animation: shimmerMove 1.8s infinite ease-in-out;
+    }
+
+    @keyframes shimmerMove {
+      0% { background-position: 130% 0; }
+      60% { background-position: -30% 0; }
+      100% { background-position: -30% 0; }
+    }
+
+    /* demo hint + reset */
+    .demo-hint {
+      margin-top: 2rem;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      letter-spacing: 0.3px;
+      opacity: 0.75;
+    }
+
+    .reset-btn {
+      background: transparent;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .reset-btn:hover {
+      border-color: #60a5fa;
+      color: #cbd5e1;
+      background: rgba(96, 165, 250, 0.05);
+      box-shadow: 0 0 12px -4px #3b82f6;
+    }
+
+    .reset-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* success state (optional subtle) */
+    .download-btn.success {
+      --btn-border: #22c55e;
+      --btn-glow: #4ade80;
+      border-color: #22c55e;
+      box-shadow: 0 0 20px -5px #22c55e;
+      transition: all 0.3s;
+    }
+
+    .download-btn.success .progress-fill {
+      background: radial-gradient(circle at 70% 50%, rgba(34, 197, 94, 0.45), transparent 80%);
+    }
+
+    .download-btn.success svg {
+      filter: drop-shadow(0 0 10px #4ade80);
+    }
+
+    /* icon animation for download */
+    @keyframes arrowBounce {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(3px); }
+      100% { transform: translateY(0); }
+    }
+
+    .download-btn:hover .btn-icon svg {
+      animation: arrowBounce 0.7s infinite ease-in-out;
+    }
+
+    /* disabled state simulation (just for demo, not used) */
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- ADVANCED DOWNLOAD BUTTON -->
+    <button class="download-btn" id="downloadBtn" aria-label="Download file">
+      <!-- background progress fill (animated via CSS variable) -->
+      <span class="progress-ring">
+        <span class="progress-fill" id="progressFill"></span>
+      </span>
+      
+      <!-- shimmer overlay -->
+      <span class="shimmer"></span>
+      
+      <!-- icon -->
+      <span class="btn-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4" />
+          <path d="M5 21h14" stroke-width="2.2" />
+        </svg>
+      </span>
+      
+      <!-- label text -->
+      <span class="btn-label" id="btnLabel">Download file</span>
+    </button>
+
+    <!-- demo hints & reset -->
+    <div class="demo-hint">
+      <span>⚡ hover & click — advanced micro‑interactions</span>
+      <button class="reset-btn" id="resetBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12a9 9 0 1 1 9 9" />
+          <path d="M3 12h6M3 12V6" />
+        </svg>
+        reset state
+      </button>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const downloadBtn = document.getElementById('downloadBtn');
+      const progressFill = document.getElementById('progressFill');
+      const btnLabel = document.getElementById('btnLabel');
+      
+      // original label text
+      const defaultLabel = 'Download file';
+      
+      // simulation state
+      let isDownloading = false;
+      let progressInterval = null;
+      
+      // reset any ongoing simulation
+      function resetDownloadState() {
+        if (progressInterval) {
+          clearInterval(progressInterval);
+          progressInterval = null;
+        }
+        isDownloading = false;
+        downloadBtn.classList.remove('success');
+        // reset CSS variable to 0%
+        progressFill.style.setProperty('--btn-progress', '0%');
+        // also reset via direct width (fallback)
+        progressFill.style.width = '0%';
+        btnLabel.textContent = defaultLabel;
+      }
+      
+      // start simulated download (advanced progress animation)
+      function startDownloadSimulation() {
+        // if already downloading, reset first (safety)
+        if (isDownloading) {
+          resetDownloadState();
+        }
+        
+        isDownloading = true;
+        let progress = 0;
+        const totalTime = 2200; // ms
+        const intervalTime = 60; // ms
+        const increment = 100 / (totalTime / intervalTime); // ~2.7 per tick
+        
+        // set initial label
+        btnLabel.textContent = 'Downloading… 0%';
+        
+        // clear any existing interval
+        if (progressInterval) clearInterval(progressInterval);
+        
+        progressInterval = setInterval(() => {
+          progress += increment;
+          
+          if (progress >= 100) {
+            progress = 100;
+            // update UI to 100%
+            progressFill.style.setProperty('--btn-progress', '100%');
+            progressFill.style.width = '100%';
+            btnLabel.textContent = '✓ Downloaded';
+            
+            // add success state
+            downloadBtn.classList.add('success');
+            
+            // clear interval
+            clearInterval(progressInterval);
+            progressInterval = null;
+            isDownloading = false;
+            
+            // after a short while, revert to default (optional: keep success visible for 1.5s, then reset smoothly)
+            setTimeout(() => {
+              // if user hasn't started another download, revert to default state
+              if (!isDownloading) {
+                // gently revert to idle, but keep it looking nice
+                downloadBtn.classList.remove('success');
+                progressFill.style.setProperty('--btn-progress', '0%');
+                progressFill.style.width = '0%';
+                btnLabel.textContent = defaultLabel;
+              }
+            }, 1800); // 1.8s pause to show success
+            
+            return;
+          }
+          
+          // update UI with current progress
+          const roundedProgress = Math.floor(progress);
+          progressFill.style.setProperty('--btn-progress', `${progress}%`);
+          progressFill.style.width = `${progress}%`; // fallback
+          btnLabel.textContent = `Downloading… ${roundedProgress}%`;
+          
+        }, intervalTime);
+      }
+      
+      // click handler on download button
+      downloadBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // if already downloading, we reset first (or ignore – here we reset and restart)
+        if (isDownloading) {
+          resetDownloadState();
+          // slight delay to make it feel responsive
+          setTimeout(() => {
+            startDownloadSimulation();
+          }, 80);
+        } else {
+          startDownloadSimulation();
+        }
+      });
+      
+      // reset button
+      document.getElementById('resetBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        resetDownloadState();
+      });
+      
+      // (optional) reset if user clicks reset while downloading – already handled
+      
+      // ensure the button doesn't submit or cause layout shift
+      // accessibility: keyboard support
+      downloadBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          downloadBtn.click();
+        }
+      });
+      
+      // ensure progress fill initial state
+      progressFill.style.setProperty('--btn-progress', '0%');
+      progressFill.style.width = '0%';
+      
+      // subtle: add active class on mousedown for feedback
+      downloadBtn.addEventListener('mousedown', () => {
+        // no-op, just style handled by :active
+      });
+    })();
+  </script>
+</body>
+</html>
