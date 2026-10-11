@@ -1,455 +1,456 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>advanced download button</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Download BlackHoleCreator</title>
 
-    body {
-      background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      padding: 1.5rem;
-      margin: 0;
-    }
+<!-- Google Font (optional — remove if your app already loads one) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    .card {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(8px);
-      border-radius: 3.5rem;
-      padding: 2.5rem 2rem;
-      box-shadow: 0 30px 40px -20px rgba(0, 0, 0, 0.8), 
-                  inset 0 0 0 1px rgba(255, 255, 255, 0.06);
-    }
+<style>
+/* ==========================================================================
+   ADVANCED DOWNLOAD BUTTON — scoped under .bhc-* so it won't clash with
+   your app's existing styles.
+   ========================================================================== */
 
-    /* advanced download button */
-    .download-btn {
-      --btn-bg: #0b0f17;
-      --btn-border: #2d3a52;
-      --btn-glow: #3b82f6;
-      --btn-accent: #60a5fa;
-      --btn-text: #e2e8f0;
-      --btn-progress: 0%;
-      
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.85rem;
-      padding: 1.25rem 2.5rem 1.25rem 2.8rem;
-      font-size: 1.2rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      color: var(--btn-text);
-      background: var(--btn-bg);
-      border: 1.5px solid var(--btn-border);
-      border-radius: 100px;
-      cursor: pointer;
-      transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1);
-      box-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.8), 
-                  0 0 0 0px rgba(59, 130, 246, 0.3);
-      overflow: hidden;
-      z-index: 1;
-      isolation: isolate;
-      line-height: 1;
-      outline: none;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
+.bhc-wrap {
+  --bg-deep:      #0f172a;
+  --bg-mid:       #1e293b;
+  --btn-bg:       #0b0f17;
+  --btn-border:   #2d3a52;
+  --btn-glow:     #3b82f6;
+  --btn-accent:   #60a5fa;
+  --btn-text:     #e2e8f0;
+  --btn-success:  #22c55e;
+  --btn-error:    #ef4444;
 
-    /* glow border animation on hover */
-    .download-btn::before {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      border-radius: 100px;
-      padding: 2px;
-      background: linear-gradient(135deg, 
-        transparent 0%, 
-        transparent 30%,
-        var(--btn-glow) 50%,
-        transparent 70%,
-        transparent 100%);
-      background-size: 250% 100%;
-      background-position: 100% 0;
-      transition: background-position 0.6s ease, opacity 0.3s ease;
-      opacity: 0.8;
-      z-index: -2;
-      pointer-events: none;
-    }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
 
-    .download-btn:hover::before {
-      background-position: 0% 0;
-      opacity: 1;
-    }
+/* ── The button itself ─────────────────────────────────────────────────── */
+.bhc-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: 1.15rem 2.4rem 1.15rem 2.6rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--btn-text);
+  background: var(--btn-bg);
+  border: 1.5px solid var(--btn-border);
+  border-radius: 100px;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  z-index: 1;
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1),
+              border-color 0.35s ease,
+              box-shadow 0.35s ease;
+  box-shadow:
+    0 15px 30px -12px rgba(0, 0, 0, 0.8),
+    0 0 0 0 rgba(59, 130, 246, 0.3);
+  min-width: 260px;
+}
 
-    /* inner glass overlay */
-    .download-btn::after {
-      content: '';
-      position: absolute;
-      inset: 1px;
-      border-radius: 100px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 60%);
-      pointer-events: none;
-      z-index: -1;
-    }
+/* Glowing animated border on hover */
+.bhc-btn::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 100px;
+  padding: 2px;
+  background: linear-gradient(135deg,
+    transparent 0%, transparent 30%,
+    var(--btn-glow) 50%,
+    transparent 70%, transparent 100%);
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  opacity: 0.85;
+  z-index: -2;
+  pointer-events: none;
+  transition: background-position 0.6s ease, opacity 0.3s ease;
+}
+.bhc-btn:hover::before { background-position: 0% 0; opacity: 1; }
 
-    /* hover lift + glow */
-    .download-btn:hover {
-      transform: translateY(-2px);
-      border-color: var(--btn-accent);
-      box-shadow: 0 22px 35px -15px rgba(0, 0, 0, 0.9), 
-                  0 0 0 2px rgba(59, 130, 246, 0.25),
-                  0 0 20px -5px var(--btn-glow);
-    }
+/* Inner glass highlight */
+.bhc-btn::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 100px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
 
-    .download-btn:active {
-      transform: translateY(0px) scale(0.98);
-      transition-duration: 0.1s;
-      box-shadow: 0 8px 18px -10px black;
-    }
+.bhc-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--btn-accent);
+  box-shadow:
+    0 22px 35px -15px rgba(0, 0, 0, 0.9),
+    0 0 0 2px rgba(59, 130, 246, 0.25),
+    0 0 22px -5px var(--btn-glow);
+}
+.bhc-btn:active { transform: translateY(0) scale(0.98); transition-duration: 0.1s; }
 
-    /* icon container */
-    .btn-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.8rem;
-      height: 1.8rem;
-      transition: transform 0.3s ease;
-    }
+/* Progress fill that grows behind the label */
+.bhc-progress {
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+.bhc-progress-fill {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  width: 0%;
+  background: radial-gradient(circle at 70% 50%,
+    rgba(59, 130, 246, 0.45) 0%,
+    rgba(59, 130, 246, 0.12) 60%,
+    transparent 100%);
+  border-radius: 100px;
+  transition: width 0.35s cubic-bezier(0.3, 0.9, 0.4, 1);
+}
 
-    .download-btn:hover .btn-icon {
-      transform: translateY(-2px);
-    }
+/* Shimmer sweep */
+.bhc-shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  background: linear-gradient(105deg,
+    transparent 30%,
+    rgba(255,255,255,0.15) 45%,
+    rgba(255,255,255,0.28) 50%,
+    rgba(255,255,255,0.15) 55%,
+    transparent 70%);
+  background-size: 250% 100%;
+  background-position: 130% 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.2s;
+}
+.bhc-btn:hover .bhc-shimmer {
+  opacity: 1;
+  animation: bhcShimmer 1.8s infinite ease-in-out;
+}
+@keyframes bhcShimmer {
+  0%   { background-position: 130% 0; }
+  60%  { background-position: -30% 0; }
+  100% { background-position: -30% 0; }
+}
 
-    .download-btn svg {
-      width: 100%;
-      height: 100%;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2.1;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.6));
-    }
+/* Icon + label */
+.bhc-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  transition: transform 0.3s ease;
+}
+.bhc-btn:hover .bhc-icon { transform: translateY(-2px); }
+.bhc-icon svg {
+  width: 100%; height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.6));
+}
+.bhc-btn:hover .bhc-icon svg { animation: bhcBounce 0.7s infinite ease-in-out; }
+@keyframes bhcBounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(3px); }
+}
 
-    /* text label */
-    .btn-label {
-      position: relative;
-      display: flex;
-      align-items: center;
-      font-weight: 600;
-      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
-    }
+.bhc-label {
+  position: relative;
+  z-index: 3;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
 
-    /* progress ring background (subtle) */
-    .progress-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 100px;
-      pointer-events: none;
-      z-index: -1;
-      overflow: hidden;
-    }
+/* ── States ────────────────────────────────────────────────────────────── */
+.bhc-btn.is-busy { cursor: progress; pointer-events: none; }
+.bhc-btn.is-busy .bhc-icon svg { animation: bhcSpin 0.9s linear infinite; }
+@keyframes bhcSpin { to { transform: rotate(360deg); } }
 
-    /* progress fill effect – reveals a soft radial light that follows progress */
-    .progress-fill {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: var(--btn-progress, 0%);
-      background: radial-gradient(circle at 70% 50%, 
-        rgba(59, 130, 246, 0.35) 0%, 
-        rgba(59, 130, 246, 0.1) 60%,
-        transparent 100%);
-      transition: width 0.4s cubic-bezier(0.3, 0.9, 0.4, 1);
-      border-radius: 100px;
-      pointer-events: none;
-    }
+.bhc-btn.is-success {
+  --btn-border: var(--btn-success);
+  border-color: var(--btn-success);
+  box-shadow:
+    0 0 0 2px rgba(34, 197, 94, 0.25),
+    0 0 25px -5px var(--btn-success);
+}
+.bhc-btn.is-success .bhc-progress-fill {
+  background: radial-gradient(circle at 70% 50%,
+    rgba(34, 197, 94, 0.5) 0%, transparent 80%);
+}
+.bhc-btn.is-success .bhc-icon svg {
+  animation: none;
+  filter: drop-shadow(0 0 10px #4ade80);
+}
 
-    /* shimmer line – advanced detail */
-    .shimmer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(105deg, 
-        transparent 30%, 
-        rgba(255, 255, 255, 0.15) 45%,
-        rgba(255, 255, 255, 0.25) 50%,
-        rgba(255, 255, 255, 0.15) 55%,
-        transparent 70%);
-      background-size: 250% 100%;
-      background-position: 130% 0;
-      border-radius: 100px;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
+.bhc-btn.is-error {
+  --btn-border: var(--btn-error);
+  border-color: var(--btn-error);
+  box-shadow: 0 0 22px -6px var(--btn-error);
+}
+.bhc-btn.is-error .bhc-progress-fill {
+  background: radial-gradient(circle at 70% 50%,
+    rgba(239, 68, 68, 0.45) 0%, transparent 80%);
+}
 
-    .download-btn:hover .shimmer {
-      opacity: 1;
-      animation: shimmerMove 1.8s infinite ease-in-out;
-    }
+/* ── Fallback link that appears if Drive blocks the download ──────────── */
+.bhc-fallback {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.35s ease, max-height 0.35s ease;
+  text-align: center;
+  line-height: 1.5;
+}
+.bhc-fallback.is-visible { opacity: 1; max-height: 120px; }
+.bhc-fallback a {
+  color: var(--btn-accent, #60a5fa);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.bhc-fallback a:hover { color: #93c5fd; }
 
-    @keyframes shimmerMove {
-      0% { background-position: 130% 0; }
-      60% { background-position: -30% 0; }
-      100% { background-position: -30% 0; }
-    }
+/* ── Meta line under the button ───────────────────────────────────────── */
+.bhc-meta {
+  font-size: 0.75rem;
+  color: #64748b;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
 
-    /* demo hint + reset */
-    .demo-hint {
-      margin-top: 2rem;
-      color: #94a3b8;
-      font-size: 0.85rem;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-      letter-spacing: 0.3px;
-      opacity: 0.75;
-    }
-
-    .reset-btn {
-      background: transparent;
-      border: 1px solid #334155;
-      color: #94a3b8;
-      padding: 0.5rem 1.2rem;
-      border-radius: 40px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .reset-btn:hover {
-      border-color: #60a5fa;
-      color: #cbd5e1;
-      background: rgba(96, 165, 250, 0.05);
-      box-shadow: 0 0 12px -4px #3b82f6;
-    }
-
-    .reset-btn:active {
-      transform: scale(0.96);
-    }
-
-    /* success state (optional subtle) */
-    .download-btn.success {
-      --btn-border: #22c55e;
-      --btn-glow: #4ade80;
-      border-color: #22c55e;
-      box-shadow: 0 0 20px -5px #22c55e;
-      transition: all 0.3s;
-    }
-
-    .download-btn.success .progress-fill {
-      background: radial-gradient(circle at 70% 50%, rgba(34, 197, 94, 0.45), transparent 80%);
-    }
-
-    .download-btn.success svg {
-      filter: drop-shadow(0 0 10px #4ade80);
-    }
-
-    /* icon animation for download */
-    @keyframes arrowBounce {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(3px); }
-      100% { transform: translateY(0); }
-    }
-
-    .download-btn:hover .btn-icon svg {
-      animation: arrowBounce 0.7s infinite ease-in-out;
-    }
-
-    /* disabled state simulation (just for demo, not used) */
-  </style>
+/* ── Mobile ───────────────────────────────────────────────────────────── */
+@media (max-width: 420px) {
+  .bhc-btn {
+    width: 100%;
+    min-width: 0;
+    padding: 1.05rem 1.6rem;
+    font-size: 1rem;
+    gap: 0.65rem;
+  }
+  .bhc-icon { width: 1.45rem; height: 1.45rem; }
+}
+</style>
 </head>
-<body>
-  <div class="card">
-    <!-- ADVANCED DOWNLOAD BUTTON -->
-    <button class="download-btn" id="downloadBtn" aria-label="Download file">
-      <!-- background progress fill (animated via CSS variable) -->
-      <span class="progress-ring">
-        <span class="progress-fill" id="progressFill"></span>
-      </span>
-      
-      <!-- shimmer overlay -->
-      <span class="shimmer"></span>
-      
-      <!-- icon -->
-      <span class="btn-icon">
+
+<body style="margin:0; background:linear-gradient(145deg,#0f172a 0%,#1e293b 100%); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:1.5rem;">
+
+  <!-- ═══════════════ ADVANCED DOWNLOAD BUTTON ═══════════════ -->
+  <div class="bhc-wrap">
+
+    <button class="bhc-btn" id="bhcBtn" aria-label="Download BlackHoleCreator APK">
+      <span class="bhc-progress"><span class="bhc-progress-fill" id="bhcFill"></span></span>
+      <span class="bhc-shimmer"></span>
+      <span class="bhc-icon" id="bhcIcon">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 3v12m0 0l-4-4m4 4l4-4" />
-          <path d="M5 21h14" stroke-width="2.2" />
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4"/>
+          <path d="M5 21h14" stroke-width="2.2"/>
         </svg>
       </span>
-      
-      <!-- label text -->
-      <span class="btn-label" id="btnLabel">Download file</span>
+      <span class="bhc-label" id="bhcLabel">Download APK</span>
     </button>
 
-    <!-- demo hints & reset -->
-    <div class="demo-hint">
-      <span>⚡ hover & click — advanced micro‑interactions</span>
-      <button class="reset-btn" id="resetBtn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 12a9 9 0 1 1 9 9" />
-          <path d="M3 12h6M3 12V6" />
-        </svg>
-        reset state
-      </button>
+    <div class="bhc-fallback" id="bhcFallback">
+      Download didn't start? <a id="bhcFallbackLink" href="#" target="_blank" rel="noopener">Open the file in Google Drive ↗</a>
     </div>
-  </div>
 
-  <script>
-    (function(){
-      const downloadBtn = document.getElementById('downloadBtn');
-      const progressFill = document.getElementById('progressFill');
-      const btnLabel = document.getElementById('btnLabel');
-      
-      // original label text
-      const defaultLabel = 'Download file';
-      
-      // simulation state
-      let isDownloading = false;
-      let progressInterval = null;
-      
-      // reset any ongoing simulation
-      function resetDownloadState() {
-        if (progressInterval) {
-          clearInterval(progressInterval);
-          progressInterval = null;
-        }
-        isDownloading = false;
-        downloadBtn.classList.remove('success');
-        // reset CSS variable to 0%
-        progressFill.style.setProperty('--btn-progress', '0%');
-        // also reset via direct width (fallback)
-        progressFill.style.width = '0%';
-        btnLabel.textContent = defaultLabel;
-      }
-      
-      // start simulated download (advanced progress animation)
-      function startDownloadSimulation() {
-        // if already downloading, reset first (safety)
-        if (isDownloading) {
-          resetDownloadState();
-        }
-        
-        isDownloading = true;
-        let progress = 0;
-        const totalTime = 2200; // ms
-        const intervalTime = 60; // ms
-        const increment = 100 / (totalTime / intervalTime); // ~2.7 per tick
-        
-        // set initial label
-        btnLabel.textContent = 'Downloading… 0%';
-        
-        // clear any existing interval
-        if (progressInterval) clearInterval(progressInterval);
-        
-        progressInterval = setInterval(() => {
-          progress += increment;
-          
-          if (progress >= 100) {
-            progress = 100;
-            // update UI to 100%
-            progressFill.style.setProperty('--btn-progress', '100%');
-            progressFill.style.width = '100%';
-            btnLabel.textContent = '✓ Downloaded';
-            
-            // add success state
-            downloadBtn.classList.add('success');
-            
-            // clear interval
-            clearInterval(progressInterval);
-            progressInterval = null;
-            isDownloading = false;
-            
-            // after a short while, revert to default (optional: keep success visible for 1.5s, then reset smoothly)
-            setTimeout(() => {
-              // if user hasn't started another download, revert to default state
-              if (!isDownloading) {
-                // gently revert to idle, but keep it looking nice
-                downloadBtn.classList.remove('success');
-                progressFill.style.setProperty('--btn-progress', '0%');
-                progressFill.style.width = '0%';
-                btnLabel.textContent = defaultLabel;
-              }
-            }, 1800); // 1.8s pause to show success
-            
-            return;
-          }
-          
-          // update UI with current progress
-          const roundedProgress = Math.floor(progress);
-          progressFill.style.setProperty('--btn-progress', `${progress}%`);
-          progressFill.style.width = `${progress}%`; // fallback
-          btnLabel.textContent = `Downloading… ${roundedProgress}%`;
-          
-        }, intervalTime);
-      }
-      
-      // click handler on download button
-      downloadBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // if already downloading, we reset first (or ignore – here we reset and restart)
-        if (isDownloading) {
-          resetDownloadState();
-          // slight delay to make it feel responsive
+    <div class="bhc-meta" id="bhcMeta">Android • v0.32.0</div>
+  </div>
+  <!-- ═════════════════════════════════════════════════════════ -->
+
+<script>
+(function () {
+  'use strict';
+
+  /* ──────────────────────────────────────────────────────────
+     CONFIG — change these if you update the file
+     ────────────────────────────────────────────────────────── */
+  const CONFIG = {
+    FILE_ID:   '1mKfkR3zQb_JbDXM-4lr6bvKxeXJzWpc3',
+    APK_NAME:  'BlackHoleCreator-0.32.0-android.apk',
+    // Where the Drive "preview" page lives — used as a fallback
+    FALLBACK_URL: 'https://drive.google.com/file/d/1mKfkR3zQb_JbDXM-4lr6bvKxeXJzWpc3/view',
+    // Direct-download URL (works for files under ~100 MB without a token,
+    // and for many larger ones with confirm=t)
+    DIRECT_URL: 'https://drive.google.com/uc?export=download&id=1mKfkR3zQb_JbDXM-4lr6bvKxeXJzWpc3&confirm=t'
+  };
+
+  /* ──────────────────────────────────────────────────────────
+     DOM
+     ────────────────────────────────────────────────────────── */
+  const btn          = document.getElementById('bhcBtn');
+  const fill         = document.getElementById('bhcFill');
+  const label        = document.getElementById('bhcLabel');
+  const icon         = document.getElementById('bhcIcon');
+  const fallback     = document.getElementById('bhcFallback');
+  const fallbackLink = document.getElementById('bhcFallbackLink');
+  const meta         = document.getElementById('bhcMeta');
+
+  fallbackLink.href = CONFIG.FALLBACK_URL;
+
+  /* ──────────────────────────────────────────────────────────
+     ICONS (inline SVG swaps for the different states)
+     ────────────────────────────────────────────────────────── */
+  const ICONS = {
+    download: '<path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14" stroke-width="2.2"/>',
+    spinner:  '<circle cx="12" cy="12" r="9" stroke-opacity="0.25"/><path d="M21 12a9 9 0 0 0-9-9" stroke-width="2.4"/>',
+    check:    '<path d="M20 6L9 17l-5-5" stroke-width="2.4"/>',
+    cross:    '<path d="M18 6L6 18M6 6l12 12" stroke-width="2.4"/>'
+  };
+  function setIcon(name) {
+    icon.querySelector('svg').innerHTML = ICONS[name] || ICONS.download;
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     STATE HELPERS
+     ────────────────────────────────────────────────────────── */
+  let busy = false;
+
+  function setBusy(on) {
+    busy = on;
+    btn.classList.toggle('is-busy', on);
+    btn.setAttribute('aria-busy', on ? 'true' : 'false');
+  }
+  function clearStates() {
+    btn.classList.remove('is-success', 'is-error');
+    fill.style.width = '0%';
+    setIcon('download');
+    label.textContent = 'Download APK';
+    fallback.classList.remove('is-visible');
+    meta.textContent = 'Android • v0.32.0';
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     TRIGGER THE DOWNLOAD
+     Google Drive blocks fetch() cross-origin, so we can't read
+     progress. We instead trigger a native browser download via
+     a hidden <a download> and animate a *simulated* progress bar.
+     ────────────────────────────────────────────────────────── */
+  function triggerDriveDownload() {
+    const a = document.createElement('a');
+    a.href = CONFIG.DIRECT_URL;
+    a.download = CONFIG.APK_NAME;
+    // Some browsers ignore the download attribute cross-origin and
+    // navigate instead — opening in a new tab avoids losing the page.
+    a.target = '_blank';
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     SIMULATED PROGRESS
+     Drive won't give us Content-Length, so we animate up to ~92%
+     over ~2.5s, then jump to 100% on success.
+     ────────────────────────────────────────────────────────── */
+  let progressTimer = null;
+  function startFakeProgress() {
+    let pct = 0;
+    fill.style.width = '0%';
+    clearInterval(progressTimer);
+
+    progressTimer = setInterval(() => {
+      // ease-out: slow down as it approaches 92
+      const remaining = 92 - pct;
+      pct += Math.max(0.6, remaining * 0.08);
+      if (pct >= 92) { pct = 92; clearInterval(progressTimer); }
+
+      fill.style.width = pct + '%';
+      label.textContent = 'Downloading… ' + Math.floor(pct) + '%';
+    }, 70);
+  }
+
+  /* ──────────────────────────────────────────────────────────
+     MAIN CLICK HANDLER
+     ────────────────────────────────────────────────────────── */
+  btn.addEventListener('click', function () {
+    if (busy) return;
+
+    clearStates();
+    setBusy(true);
+    setIcon('spinner');
+    label.textContent = 'Connecting…';
+    fallback.classList.remove('is-visible');
+
+    // Small delay so the spinner is visible before the browser
+    // download dialog takes over.
+    setTimeout(() => {
+      startFakeProgress();
+
+      try {
+        triggerDriveDownload();
+
+        // Consider it a success unless the browser throws.
+        // Show a fallback link in case Drive silently blocked it
+        // (quota exceeded, virus-scan page, etc.).
+        setTimeout(() => {
+          clearInterval(progressTimer);
+          fill.style.width = '100%';
+          setBusy(false);
+          btn.classList.add('is-success');
+          setIcon('check');
+          label.textContent = '✓ Downloaded';
+          meta.textContent = 'Check your browser downloads';
+
+          // Reveal fallback in case Drive showed its warning page instead
+          setTimeout(() => fallback.classList.add('is-visible'), 900);
+
+          // Auto-reset after a while so the button is reusable
           setTimeout(() => {
-            startDownloadSimulation();
-          }, 80);
-        } else {
-          startDownloadSimulation();
-        }
-      });
-      
-      // reset button
-      document.getElementById('resetBtn').addEventListener('click', function(e) {
-        e.stopPropagation();
-        resetDownloadState();
-      });
-      
-      // (optional) reset if user clicks reset while downloading – already handled
-      
-      // ensure the button doesn't submit or cause layout shift
-      // accessibility: keyboard support
-      downloadBtn.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          downloadBtn.click();
-        }
-      });
-      
-      // ensure progress fill initial state
-      progressFill.style.setProperty('--btn-progress', '0%');
-      progressFill.style.width = '0%';
-      
-      // subtle: add active class on mousedown for feedback
-      downloadBtn.addEventListener('mousedown', () => {
-        // no-op, just style handled by :active
-      });
-    })();
-  </script>
+            if (!busy) clearStates();
+          }, 6000);
+        }, 2400);
+
+      } catch (err) {
+        // Rare — most failures happen silently inside the browser.
+        clearInterval(progressTimer);
+        setBusy(false);
+        btn.classList.add('is-error');
+        setIcon('cross');
+        label.textContent = '✗ Download failed';
+        meta.textContent = 'Try the fallback link below';
+        fallback.classList.add('is-visible');
+        console.error('[Download button]', err);
+      }
+    }, 350);
+  });
+
+  /* Keyboard: Space / Enter already work on <button>, but we
+     explicitly prevent the default page-scroll on Space. */
+  btn.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.key === 'Spacebar') e.preventDefault();
+  });
+
+})();
+</script>
 </body>
 </html>
